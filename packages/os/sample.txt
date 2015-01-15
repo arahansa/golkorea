@@ -1,0 +1,2 @@
+Hello Go os package
+한글도 잘 되나요?^^

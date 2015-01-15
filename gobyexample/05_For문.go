@@ -1,6 +1,6 @@
 /*
 	author twitter : @mmcgrana
-	https://gobyexample.com/constants
+	https://gobyexample.com/for
 
 	Go by Example: For
 
