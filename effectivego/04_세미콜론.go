@@ -1,6 +1,8 @@
 
 
 /*
+https://code.google.com/p/golang-korea/wiki/EffectiveGo#Semicolons
+
 
 Semicolons
 C언어 처럼 Go언어의 정규화된 문법은 한 문장을 끝내기 위해 세미콜론(;)을 사용합니다. 
