@@ -1,4 +1,6 @@
 /*
+원글 링크 : https://code.google.com/p/golang-korea/wiki/EffectiveGo
+
 new()를 사용한 메모리 할당(Allocation with new())
 Go언어에서는 new()와 make(), 두가지 메모리 할당 원형이 있습니다. 
 new()와 make()는 서로 다르게 동작하며 다른 형태로 적용되어 지기 때문에 혼란스러울 수 있습니다. 

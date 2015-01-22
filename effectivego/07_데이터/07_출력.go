@@ -1,4 +1,8 @@
 /*
+
+원글 링크 : https://code.google.com/p/golang-korea/wiki/EffectiveGo
+
+
 출력 (Printing)
 Go언어에서 일반적인 출력은 C언어에서 printf와 비슷한 형태를 사용합니다. 
 하지만 더 많은 옵션을 제공하며 일반화되어 있습니다. 

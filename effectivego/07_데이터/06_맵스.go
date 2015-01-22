@@ -1,4 +1,7 @@
 /*Maps
+원글 링크 : https://code.google.com/p/golang-korea/wiki/EffectiveGo
+
+
 Map은 서로 다른 타입의 값들에 접근하기 위한 편리하고 강력한 자료구조 입니다. 
 Key는 동등연산자(==)이 가능한 integer, float, 복소수, string, 포인터, 
 그리고 인터페이스(dynamic 타입이 동등연산을 지원한다면)와 같이 어떤 타입이든 될 수 있습니다. 

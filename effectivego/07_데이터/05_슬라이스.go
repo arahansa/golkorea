@@ -1,4 +1,7 @@
 /*
+원글 링크 : https://code.google.com/p/golang-korea/wiki/EffectiveGo
+
+
 Slices
 slice는 연속적인 자료에 대해 더 일반화하고, 강력하며, 편리한 인터페이스를 제공하기 위해 배열을 둘러쌉니다. 
 변환 행렬 같은 명확한 크기를 갖는 아이템을 제외하고, Go에서 대부분의 배열 프로그램은 단순 배열 보다는 slice를 사용합니다.

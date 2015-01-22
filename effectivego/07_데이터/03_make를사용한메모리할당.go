@@ -1,4 +1,8 @@
 /*
+
+원글 링크 : https://code.google.com/p/golang-korea/wiki/EffectiveGo
+
+
 메모리 할당으로 다시 돌아가보면, 내장함수 make(T, args)는 new(T)와는 다른 기능을 제공합니다.
 make()는 slice, map, channel을 만드는 용도로만 사용됩니다.
 또, *T가 아니라 T 타입의 초기 값(초기값은 0이 아님)을 반환합니다.

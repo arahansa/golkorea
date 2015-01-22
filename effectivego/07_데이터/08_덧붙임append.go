@@ -1,4 +1,8 @@
 /*덧붙임(Append)
+
+원글 링크 : https://code.google.com/p/golang-korea/wiki/EffectiveGo
+
+
 이제 내장함수인 append 함수에 대해 설명하도록 하겠습니다. 
 append 함수의 특징은 위에 나온 기존의 append 함수와는 좀 다릅니다. 대략 다음과 같습니다:
 */

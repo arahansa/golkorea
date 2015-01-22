@@ -1,4 +1,8 @@
 /*
+
+원글 링크 : https://code.google.com/p/golang-korea/wiki/EffectiveGo
+
+
 배열(Arrays)
 배열은 메모리의 자세한 레이아웃을 설계할 때 유용하며, 때로는, 메모리 할당하는 것을 피할 수 있습니다. 
 하지만 주로 배열은 다음 섹션의 주제인 slice를 위한 하나의 덩어리 입니다. 

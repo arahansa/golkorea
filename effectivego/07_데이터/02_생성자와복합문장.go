@@ -1,4 +1,8 @@
 /*
+
+원글 링크 : https://code.google.com/p/golang-korea/wiki/EffectiveGo
+
+
 때때로, zero 값으로는 충분하지 않기 때문에 여기있는 os package로 부터 파생된 예처럼 초기화 생성자가 필요할 때가 있습니다.
 */
 func NewFile(fd int, name string) *File {
