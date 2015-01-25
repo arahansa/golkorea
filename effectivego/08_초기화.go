@@ -1,4 +1,7 @@
 /*
+
+원본주소 : https://code.google.com/p/golang-korea/wiki/EffectiveGo
+
 비록, C나 C++의 초기화 과정과 표면적으로 아주 다르게 보이는 부분은 없지만,
 Go 언어의 초기화 과정은 보다 강력합니다.
 초기화 과정에서 복잡한 구조체가 만들어지고,
