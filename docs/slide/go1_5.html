@@ -1,0 +1,1882 @@
+
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Go in Go</title>
+    <meta charset='utf-8'>
+    <script src="js/jquery-1.11.1.min.js"></script>
+    <script src='js/slides.js'></script>
+    <script src='js/translate.js'></script>
+    <meta name="description" content="Go 1.5 번역.. 해봤는데.. 괜히 했다 싶음. ">
+    <meta name="author" content="아라한사">
+
+    <style>
+@import url(http://fonts.googleapis.com/earlyaccess/kopubbatang.css);
+
+.originalArticle {
+  display: none;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.translateArticle {
+  font-family: 'KoPub Batang', serif; position : relative;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.btnTr {
+  position: absolute;
+  right: 0px;
+  top: 10px;
+  width: 45px;
+  height: 30px;
+  cursor: pointer;
+  z-index: 999;
+  font-size: 10px;
+}
+</style>
+
+  </head>
+
+  <body style='display: none'>
+
+    <section class='slides layout-widescreen'>
+      
+      <article>
+            <div class="translateArticle">
+              <h1>Go 안의 Go</h1>
+        <h3>고퍼 페스티벌</h3>
+        <h3> 2015년 5월 26일</h3>
+        
+          <div class="presenter">
+            
+    
+  <p>
+    롭 파이크 
+  </p>
+  
+
+  
+  <p>
+    구글 
+  </p>
+
+  <p></p><p>키보드 오른쪽, 혹은 마우스로 우측 가장자리 클릭^^</p>
+  
+
+          </div>
+            </div>
+            <div class="originalArticle">
+                            <h1>Go in Go</h1>
+                      <h3>Gopherfest</h3>
+                      <h3>26 May 2015</h3>
+                      
+                        <div class="presenter">
+                          
+                  
+                <p>
+                  Rob Pike
+                </p>
+                
+
+                
+                <p>
+                  Google
+                </p>
+                
+
+                        </div>
+            </div>  
+        
+              
+        
+      </article>
+      
+<article>
+        <div class="translateArticle">
+          <h3>시작하며</h3>
+          <p>음.. 몇일 후에 GO 1.5 에 대해 이야기하는 자리에 가게 되어서..</p>      
+          <p>개발끈이 짧다보니.. 뭐라도 준비해갈까..해서 그냥 눈에보이는 걸</p>
+          <p>급하게 번역해봤습니다. 구글번역기 정도의 번역입니다 ;; </p>
+
+          <Br>
+            <p>화면 우측 상단에 번역 버튼을 올리오니, 헷갈리실때는 영어를 직접 보시고</p>
+            <p>잘못된 것이 있으면 연락주시면 바로 고쳐보겠습니다. 감사합니다. </p>
+  
+  
+        </div>
+        <div class="originalArticle">
+           <h3>시작하며</h3>
+          <p>음.. 몇일 후에 GO 1.5 에 대해 이야기하는 자리에 가게 되어서..</p>      
+          <p>개발끈이 짧다보니.. 뭐라도 준비해갈까..해서 그냥 눈에보이는 걸</p>
+          <p>급하게 번역해봤습니다. 구글번역기 정도의 번역입니다 ;; </p>
+
+          <Br>
+            <p>화면 우측 상단에 번역 버튼을 올리오니, 헷갈리실때는 영어를 직접 보시고</p>
+            <p>잘못된 것이 있으면 연락주시면 바로 고쳐보겠습니다. 감사합니다. </p>
+  
+
+        
+  
+        </div>
+
+      
+      </article>
+
+
+
+
+
+
+
+  
+  
+      <article>
+        <div class="translateArticle">
+          <h3>Go 안의 Go</h3>
+        
+  
+  <p>
+    GO의 1.5 버젼을 맞이하여 , 이제 전체적 시스템은 Go로 쓰여졌습니다. 
+<br>
+
+    (그리고 조금의 어셈블러 ^^)
+  </p>
+  
+
+  
+  <p>
+    C 는 가버렸습니다. 
+  </p>
+  
+
+  
+  <p>
+    Side note: <code>gccgo</code> 는 여전히 존재하며
+<br>
+
+    이 talk는 기본 컴파일러, <code>gc</code>에 대해 이야기합니다. 
+  </p>
+        </div>
+        <div class="originalArticle">
+          
+
+        <h3>Go in Go</h3>
+        
+  
+  <p>
+    As of the 1.5 release of Go, the entire system is now written in Go.
+<br>
+
+    (And a little assembler.)
+  </p>
+  
+
+  
+  <p>
+    C is gone.
+  </p>
+  
+
+  
+  <p>
+    Side note: <code>gccgo</code> is still going strong.
+<br>
+
+    This talk is about the original compiler, <code>gc</code>.
+  </p>
+  
+        </div>
+
+      
+      </article>
+  
+  
+  
+      <article>
+      
+           <div class="translateArticle">
+              <h3>왜 C로 쓰여졌었냐구요?</h3>
+        
+  
+  <p>
+    Bootstrapping을 위해서죠. (컴퓨터 용어라.. 뭐.. )
+  </p>
+  
+
+  
+  <p>
+    (또한 Go는 처음에는 컴파일러 구현 언어로 의도되지 않았습니다. )
+  </p>
+  
+           </div>
+           <div class="originalArticle">
+              <h3>Why was it in C?</h3>
+        
+  
+  <p>
+    Bootstrapping.
+  </p>
+  
+
+  
+  <p>
+    (Also Go was not intended primarily as a compiler implementation language.)
+  </p>
+  
+           </div>  
+       
+             
+
+      
+      </article>
+  
+  
+  
+      <article>
+      
+            <div class="translateArticle">
+              <h3>왜 Go컴파일러로 갔을까요?</h3>
+        
+  
+  <p>
+    입증(validation)을 위한 게 아닌 좀더 실용적인 이유였습니다 :
+    
+  </p>
+  
+
+  <ul>
+  
+    <li>GO는 (정확히) C보다 쓰기 쉽습니다. </li>
+  
+    <li>(디버거의 부재에도 불구하고) C보다 디버깅하기 쉽습니다. </li>
+  
+    <li>Go 는 당신이 알아야할 유일한 언어입니다. 더 많은 지원(contributions)을 받기 위해</li>
+  
+    <li>Go 의 더 나은 모듈성, 도구들, 테스트, 프로파일링, ...</li>
+  
+    <li>Go 는 병렬 프로그래밍 실행을 쉽게 합니다.</li>
+  
+  </ul>
+
+  
+  <p>
+   다음과 같은 잇점을 봤을 때 , 아직 이르긴 합니다. 
+  </p>
+  
+
+  
+  <p>
+    디마인 문서: <a href="http://golang.org/s/go13compiler" target="_blank">golang.org/s/go13compiler</a>
+  </p>
+  
+            </div>
+            <div class="originalArticle">
+              <h3>Why move the compiler to Go?</h3>
+        
+  
+  <p>
+    Not for validation; we have more pragmatic motives:
+  </p>
+  
+
+  <ul>
+  
+    <li>Go is easier to write (correctly) than C.</li>
+  
+    <li>Go is easier to debug than C (even absent a debugger).</li>
+  
+    <li>Go is the only language you&#39;d need to know; encourages contributions.</li>
+  
+    <li>Go has better modularity, tooling, testing, profiling, ...</li>
+  
+    <li>Go makes parallel execution trivial.</li>
+  
+  </ul>
+
+  
+  <p>
+    Already seeing benefits, and it&#39;s early yet.
+  </p>
+  
+
+  
+  <p>
+    Design document: <a href="http://golang.org/s/go13compiler" target="_blank">golang.org/s/go13compiler</a>
+  </p>
+  
+            </div>  
+        
+              
+
+      
+      </article>
+  
+  
+  
+      <article>
+      
+            <div class="translateArticle">
+              <h3>왜 런타임이 Go로 갔나요?(?)</h3>
+        
+  
+  <p>
+    우리는 단지 런타임 컴파일을 하는 우리의 C컴파일러를 가지고 있었습니다. 
+    
+<br>
+    우리는 Go로된 단편스택같은, 같은 방식의 ABI를 가진 컴파일러를 원했었습니다. 
+    (헷갈림)
+  </p>
+  
+
+  
+  <p>
+    Go로의 전환은 C컴파일러를 제거한다는 것을 의미합니다. 
+    
+<br>
+    이것은 컴파일러를 GO로 전환하는 것보다 더 중요합니다 .
+    
+  </p>
+  
+
+  
+  <p>
+    ( 컴파일러 전환의 모든 이유가 runtime에도 적용이 되었습니다.)
+   
+  </p>
+  
+
+  
+  <p>
+    오직 하나의 언어가 runtime에 있고, 통합과 스택관리가 쉬워졌습니다.
+    
+  </p>
+  
+
+  
+  <p>
+    언제나, 단순성이 가장 고려되었습니다.
+    
+  </p>
+  
+
+            </div>
+            <div class="originalArticle">
+              <h3>Why move the runtime to Go?</h3>
+        
+  
+  <p>
+    We had our own C compiler just to compile the runtime.
+<br>
+
+    We needed a compiler with the same ABI as Go, such as segmented stacks.
+  </p>
+  
+
+  
+  <p>
+    Switching it to Go means we can get rid of the C compiler.
+<br>
+
+    That&#39;s more important than converting the compiler to Go.
+  </p>
+  
+
+  
+  <p>
+    (All the reasons for moving the compiler apply to the runtime as well.)
+  </p>
+  
+
+  
+  <p>
+    Now only one language in the runtime; easier integration, stack management, etc.
+  </p>
+  
+
+  
+  <p>
+    As always, simplicity is the overriding consideration.
+  </p>
+  
+
+            </div>  
+        
+              
+      
+      </article>
+  
+  
+  
+      <article>
+      
+           <div class="translateArticle">
+              <h3>역사</h3>
+        
+  
+  <p>
+    왜 우리는 우리의 도구를 가지고 있을까요?
+    
+<br>
+
+    우리들의 ABI?
+<br>
+
+    우리들의 파일형식?
+  </p>
+  
+
+  
+  <p>
+    역사, 친숙함, 나아가기 쉬움. 그리고 속도
+    
+  </p>
+  
+
+  
+  <p>
+    GCC, LLVM과 함께 많은 Go의 큰 변화는 더 힘이 들 것입니다. 
+    
+  </p>
+  
+<p class="link"><a href="https://news.ycombinator.com/item?id=8817990" target="_blank">news.ycombinator.com/item?id=8817990</a></p>
+           </div>
+           <div class="originalArticle">
+              <h3>History</h3>
+        
+  
+  <p>
+    Why do we have our own tool chain at all?
+<br>
+
+    Our own ABI?
+<br>
+
+    Our own file formats?
+  </p>
+  
+
+  
+  <p>
+    History, familiarity, and ease of moving forward. And speed.
+  </p>
+  
+
+  
+  <p>
+    Many of Go&#39;s big changes would be much harder with GCC or LLVM.
+  </p>
+  
+<p class="link"><a href="https://news.ycombinator.com/item?id=8817990" target="_blank">news.ycombinator.com/item?id=8817990</a></p>
+           </div>  
+       
+             
+      
+      </article>
+  
+  
+  
+      <article>
+            <div class="translateArticle">
+              <h3>큰 변화들</h3>
+        
+  
+  <p>
+    도구를 가지고, Go로 가서 쉬워진 모든 것들 :
+  </p>
+  
+
+  <ul>
+  
+    <li>링커 리아키텍쳐 </li>
+  
+    <li>새로운 가비지 콜렉터 </li>
+  
+    <li>스택 맵들</li>
+  
+    <li>지속적인 스택</li>
+  
+    <li>write barriers (쓰기배리어??) </li>
+  
+  </ul>
+
+  
+  <p>
+  마지막 세가지들은 C에서 불가능한 것입니다. :
+
+    
+  </p>
+  
+
+  <ul>
+  
+    <li>
+    C는 타입 세이프하지 않습니다. 무엇이 포인터인지 언제나 알지 않습니다. 
+      </li>
+  
+    <li>
+      최적화에 의해 스택 슬롯이 재명명될 수 있습니다. 
+      </li>
+  
+  </ul>
+
+  
+  <p>
+    (<code>Gccgo</code> 는 아직 단편된 스택, 부정확한(스택) 콜렉션을 한동안 가집니다.)
+  </p>
+            </div>
+            <div class="originalArticle">
+              <h3>Big changes</h3>
+        
+  
+  <p>
+    All made easier by owning the tools and/or moving to Go:
+  </p>
+  
+
+  <ul>
+  
+    <li>linker rearchitecture</li>
+  
+    <li>new garbage collector</li>
+  
+    <li>stack maps</li>
+  
+    <li>contiguous stacks</li>
+  
+    <li>write barriers</li>
+  
+  </ul>
+
+  
+  <p>
+    The last three are all but impossible in C:
+  </p>
+  
+
+  <ul>
+  
+    <li>C is not type safe; don&#39;t always know what&#39;s a pointer</li>
+  
+    <li>aliasing of stack slots caused by optimization</li>
+  
+  </ul>
+
+  
+  <p>
+    (<code>Gccgo</code> will have segmented stacks and imprecise (stack) collection for a while yet.)
+  </p>
+            </div>  
+        
+              
+          
+
+      
+      </article>
+  
+  
+  
+      <article>
+      
+            <div class="translateArticle">
+              <h3>고루틴 스택</h3>
+        
+  <ul>
+  
+    <li>1.2 까지: 스택들이 단편화되었습니다. </li>
+  
+    <li>1.3: 스택들이 근접합니다.  C코드를 런타임에서 실행하지 않는한.. </li>
+  
+    <li>1.4: 시스템 스택에 대한 제한된 C로 인해 스택들이 근접되었습니다.</li>
+  
+    <li>1.5: C를 제거함으로써 스택들이 근접됨</li>
+  
+  </ul>
+
+  
+  <p>
+    이것들은 각각 큰 발걸음이었고, 빠르게 만들어져갔습니다.(led by <code>khr@</code>).
+  </p>
+  
+            </div>
+            <div class="originalArticle">
+              <h3>Goroutine stacks</h3>
+        
+  <ul>
+  
+    <li>Until 1.2: Stacks were segmented.</li>
+  
+    <li>1.3: Stacks were contiguous unless executing C code (runtime).</li>
+  
+    <li>1.4: Stacks made contiguous by restricting C to system stack.</li>
+  
+    <li>1.5: Stacks made contiguous by eliminating C.</li>
+  
+  </ul>
+
+  
+  <p>
+    These were each huge steps, made quickly (led by <code>khr@</code>).
+  </p>
+  
+            </div>  
+        
+              
+
+      
+      </article>
+  
+  
+  
+      <article>
+            <div class="translateArticle">
+              <h3>런타임 전환</h3>
+        
+  
+  <p>
+    기계의 도움과 수작업으로 많은 것들이 이뤄졌습니다.
+  </p>
+  
+
+  
+  <p>
+    안전한 언어에서 런타임을 구현하는 것은 도전이었습니다. 
+<br>
+      예를 들어서 GC에서 포인터들을 raw bits로 다루기 위해  <code>unsafe</code> 가 사용된 경우가 있긴 합니다.
+<br>
+  그러나 당신이 생각하는 것만큼은 많지 않습니다. 
+    
+  </p>
+  
+
+  
+  <p>
+    다음 세션의 어떤 번역자(여기선 C에서 Go로의 전환을 도와준 사람을 일컫는 듯?:역주)
+    가 translation(전환)을 많이 도와줬습니다. 
+  </p>
+            </div>
+            <div class="originalArticle">
+              <h3>Converting the runtime</h3>
+        
+  
+  <p>
+    Mostly done by hand with machine assistance.
+  </p>
+  
+
+  
+  <p>
+    Challenge to implement the runtime in a safe language.
+<br>
+
+    Some use of <code>unsafe</code> to deal with pointers as raw bits in the GC, for instance.
+<br>
+
+    But less than you might think.
+  </p>
+  
+
+  
+  <p>
+    The translator (next sections) helped for some of the translation.
+  </p>
+            </div>  
+        
+              
+      </article>
+  
+  
+  
+      <article>
+            <div class="translateArticle">
+              <h3>컴파일러 전환하기</h3>
+        
+  
+  <p>
+    왜 처음부터 시작하지않고, 전환을 했냐구요? 정확함과 테스트를 위해서였습니다.
+  </p>
+  
+<br>
+  
+  <p>
+    단계:
+  </p>
+  
+
+  <ul>
+  
+    <li>C에서 Go로의 커스텀 번역기를 쓰세요</li>
+  
+    <li>translator를 돌리고, 성공할때까지 반복(iterate)하세요</li>
+  
+    <li>bit-동일한 결과로 성공을 측정하세요</li>
+  
+    <li>수작업과 기계작업으로 코드를 정리(clean up)하세요</li>
+  
+    <li>C안의 GO속에서 자연스러운 Go로 옮겨갑니다. (아직도 하는 중)</li>
+  
+  </ul>
+            </div>
+            <div class="originalArticle">
+              <h3>Converting the compiler</h3>
+        
+  
+  <p>
+    Why translate it, not write it from scratch? Correctness, testing.
+  </p>
+  
+
+  
+  <p>
+    Steps:
+  </p>
+  
+
+  <ul>
+  
+    <li>Write a custom translator from C to Go.</li>
+  
+    <li>Run the translator, iterate until success.</li>
+  
+    <li>Measure success by bit-identical output.</li>
+  
+    <li>Clean up the code by hand and by machine.</li>
+  
+    <li>Turn it from C-in-Go to idiomatic Go (still happening).</li>
+  
+  </ul>
+            </div>  
+        
+              
+      </article>
+  
+  
+  
+      <article>
+            <div class="translateArticle">
+              <h3>변환기</h3>
+        
+  
+  <p>
+    첫번째 출력은 (안좋게) GO로 변환되는 한라인씩의 C 였습니다.
+    
+<br>
+    이것을 위한 도구는 <code>rsc@</code>로 쓰여졌습니다. (GopherCon 2014 에서 얘기했었죠)
+    
+<br>
+    이 일을 위해서 일반적인 C-go 변환기가 아니라 커스터마이징해서 썻습니다. 
+  </p>
+  
+
+  
+  <p>
+    단계:
+  </p>
+  
+
+  <ul>
+  
+    <li>새로운 간단한 C 파서를 사용해서 C코드를 파싱하였고 (<code>yacc</code>)</li>
+  
+    <li>표현식으로<code>*p++</code> 같은 C 비슷한 것들은 지우거나 다시 쓰여졌습니다.</li>
+  
+    <li>
+      C 파싱 트리를 돌면서(Walk), C코드를 Go문법으로 출력합니다.
+      </li>
+  
+    <li>출력을 컴파일합니다.</li>
+  
+    <li>실행하고 생성된 코드를 비교합니다.</li>
+  
+    <li>반복합니다. </li>
+  
+  </ul>
+
+  
+  <p>
+    <code>Yacc</code> 문법은 sam-powered hands으로 변환되었습니다. 
+  </p>
+  
+            </div>
+            <div class="originalArticle">
+              <h3>Translator</h3>
+        
+  
+  <p>
+    First output was C line-by-line translated to (bad!) Go.
+<br>
+
+    Tool to do this written by <code>rsc@</code> (talked about at GopherCon 2014).
+<br>
+
+    Custom written for this job, not a general C-to-Go translator.
+  </p>
+  
+
+  
+  <p>
+    Steps:
+  </p>
+  
+
+  <ul>
+  
+    <li>Parse C code using new simple C parser (<code>yacc</code>)</li>
+  
+    <li>Remove or rewrite C-isms such as <code>*p++</code> as an expression</li>
+  
+    <li>Walk the C parse tree, print the C code in Go syntax</li>
+  
+    <li>Compile the output</li>
+  
+    <li>Run, compare generated code</li>
+  
+    <li>Repeat</li>
+  
+  </ul>
+
+  
+  <p>
+    The <code>Yacc</code> grammar was translated by sam-powered hands.
+  </p>
+  
+            </div>  
+        
+              
+      </article>
+  
+  
+  
+      <article>
+            <div class="translateArticle">
+               <h3>변환설정</h3>
+        
+  
+  <p>
+    손으로 다시쓰여진 다음과 같은 룰에 의하여 도움을 받습니다.
+    :
+  </p>
+  
+
+  <ul>
+  
+    <li>이 필드는 bool 이다. </li>
+  
+    <li>이 함수는 bool 을 반환한다. </li>
+  
+  </ul>
+
+  
+  <p>
+    표준 라이브러리를 사용하는 것과 같은 것들을 위해 diff같은 것들이 다시 쓰여졌습니다:
+  </p>
+  
+
+  
+  <div class="code"><pre>diff {
+-    g.Rpo = obj.Calloc(g.Num*sizeof(g.Rpo[0]), 1).([]*Flow)
+-    idom = obj.Calloc(g.Num*sizeof(idom[0]), 1).([]int32)
+-    if g.Rpo == nil || idom == nil {
+-        Fatal(&#34;out of memory&#34;)
+-    }
+&#43;    g.Rpo = make([]*Flow, g.Num)
+&#43;    idom = make([]int32, g.Num)
+}</pre></div>
+  
+            </div>
+            <div class="originalArticle">
+               <h3>Translator configuration</h3>
+        
+  
+  <p>
+    Aided by hand-written rewrite rules, such as:
+  </p>
+  
+
+  <ul>
+  
+    <li>this field is a bool</li>
+  
+    <li>this function returns a bool</li>
+  
+  </ul>
+
+  
+  <p>
+    Also diff-like rewrites for things such as using the standard library:
+  </p>
+  
+
+  
+  <div class="code"><pre>diff {
+-    g.Rpo = obj.Calloc(g.Num*sizeof(g.Rpo[0]), 1).([]*Flow)
+-    idom = obj.Calloc(g.Num*sizeof(idom[0]), 1).([]int32)
+-    if g.Rpo == nil || idom == nil {
+-        Fatal(&#34;out of memory&#34;)
+-    }
+&#43;    g.Rpo = make([]*Flow, g.Num)
+&#43;    idom = make([]int32, g.Num)
+}</pre></div>
+  
+            </div>  
+        
+              
+      </article>
+  
+  
+  
+      <article>
+      
+            <div class="translateArticle">
+              <h3>다른 예제</h3>
+        
+  
+  <p>
+    언어간의 다른 시멘틱한 차이때문에 발생합니다.
+    
+  </p>
+  
+
+  
+  <div class="code"><pre>diff {
+-    if nreg == 64 {
+-        mask = ^0 // can&#39;t rely on C to shift by 64
+-    } else {
+-        mask = (1 &lt;&lt; uint(nreg)) - 1
+-    }
+&#43;    mask = (1 &lt;&lt; uint(nreg)) - 1
+}</pre></div>
+            </div>
+            <div class="originalArticle">
+              <h3>Another example</h3>
+        
+  
+  <p>
+    This one due to semantic difference between the languages.
+  </p>
+  
+
+  
+  <div class="code"><pre>diff {
+-    if nreg == 64 {
+-        mask = ^0 // can&#39;t rely on C to shift by 64
+-    } else {
+-        mask = (1 &lt;&lt; uint(nreg)) - 1
+-    }
+&#43;    mask = (1 &lt;&lt; uint(nreg)) - 1
+}</pre></div>
+            </div>  
+        
+              
+  
+
+      
+      </article>
+  
+  
+  
+      <article>
+            <div class="translateArticle">
+                    <h3>grind</h3>
+        
+  
+  <p>
+    Go 에서는, 새로운 도구 <code>grind</code> 가 개발되었습니다. (by <code>rsc@</code>):
+  </p>
+  
+
+  <ul>
+  
+    <li>Go를 파싱하고, 타입체크하고</li>
+  
+    <li>
+      실행하려고 수정한 것들의 리스트를 기록하고, 이 위치에 텍스트를 넣고
+      </li>
+  
+    <li>
+      끝에서는 수정한 것들을 소스에 적용하고요. (AST를 수정하는 것은 어려웠습니다)
+      </li>
+  
+  </ul>
+
+  
+  <p>
+    프로파일링과 다른 분석들에 의한 변화들:
+  </p>
+  
+
+  <ul>
+  
+    <li>죽은 코드 지우기 </li>
+  
+    <li>gotos 지우기</li>
+  
+    <li>사용하지 않는 라벨들 지우고, 필요하지 않는것들 등등 지우기 </li>
+  
+    <li> <code>var</code> 선언을 처음 사용 근처로 두기</li>
+  
+  </ul>
+<p class="link"><a href="http://rsc.io/grind" target="_blank">rsc.io/grind</a></p>
+      
+                  </div>
+                  <div class="originalArticle">
+                    <h3>Grind</h3>
+        
+  
+  <p>
+    Once in Go, new tool <code>grind</code> deployed (by <code>rsc@</code>):
+  </p>
+  
+
+  <ul>
+  
+    <li>parses Go, type checks</li>
+  
+    <li>records a list of edits to perform: &#34;insert this text at this position&#34;</li>
+  
+    <li>at end, applies edits to source (hard to edit AST).</li>
+  
+  </ul>
+
+  
+  <p>
+    Changes guided by profiling and other analysis:
+  </p>
+  
+
+  <ul>
+  
+    <li>removes dead code</li>
+  
+    <li>removes gotos</li>
+  
+    <li>removes unused labels, needless indirections, etc.</li>
+  
+    <li>moves <code>var</code> declarations nearer to first use</li>
+  
+  </ul>
+<p class="link"><a href="http://rsc.io/grind" target="_blank">rsc.io/grind</a></p>
+      
+                  </div>  
+              
+                          
+          
+      </article>
+  
+  
+  
+      <article>
+            <div class="translateArticle">
+               <h3>성능 문제들</h3>
+        
+  
+  <p>
+    변환기에 의한 출력은 보잘것없는 Go 였습니다. 그리고 10배 느리게 동작했엇습니다.
+    
+<br>
+    많은 속도지연이 복구되었습니다. 
+  </p>
+  
+
+  
+  <p>
+    C 에서 GO로 가면서 나왔던 문제들 :
+  </p>
+  
+
+  <ul>
+  
+    <li>
+      C패턴이 안 좋은 GO코드가 될 수 있었음. 복잡한 <code>for</code> 반복문들</li>
+  
+    <li>
+      C 스택변수가 escape하질 않음. Go 컴파일러도 확신하지 못함. </li>
+  
+    <li>
+  <code>fmt.Stringer</code> vs C의  <code>varargs</code>
+      </li>
+  
+    <li>
+      Go 에서 <code>unions</code>는 없고 <code>structs</code> 로 대신함 :부풀어짐
+      </li>
+  
+    <li>
+      안 좋은 위치에있는 변수 선언들 </li>
+  
+  </ul>
+
+  
+  <p>
+    씨 컴파일러는 많은 메모리를 자유롭게 하지 않지만(해제?),  Go는 GC를 가집니다. 
+
+
+ 
+<br>
+
+    CPU와 메모리에 오버헤드를 증가시킵니다. 
+  </p>
+  
+            </div>
+            <div class="originalArticle">
+               <h3>Performance problems</h3>
+        
+  
+  <p>
+    Output from translator was poor Go, and ran about 10X slower.
+<br>
+
+    Most of that slowdown has been recovered.
+  </p>
+  
+
+  
+  <p>
+    Problems with C to Go:
+  </p>
+  
+
+  <ul>
+  
+    <li>C patterns can be poor Go; e.g.: complex <code>for</code> loops</li>
+  
+    <li>C stack variables never escape; Go compiler isn&#39;t as sure</li>
+  
+    <li>interfaces such as <code>fmt.Stringer</code> vs. C&#39;s <code>varargs</code></li>
+  
+    <li>no <code>unions</code> in Go, so use <code>structs</code> instead: bloat</li>
+  
+    <li>variable declarations in wrong place</li>
+  
+  </ul>
+
+  
+  <p>
+    C compiler didn&#39;t free much memory, but Go has a GC.
+<br>
+
+    Adds CPU and memory overhead.
+  </p>
+  
+            </div>  
+        
+              
+      </article>
+  
+  
+  
+      <article>
+            <div class="translateArticle">
+               <h3>성능 fix</h3>
+        
+  
+  <p>
+    프로파일! (이전엔 안했음!)
+  </p>
+  
+
+  <ul>
+  
+    <li><code>vars</code> 를 처음 사용에 가깝게 함</li>
+  
+    <li> <code>vars</code> 를 복합적으로 쪼갬(split)</li>
+  
+    <li>
+      컴파일러의 코드들을 라이브러리의 코드들로 대체함. 예를 들자면 <code>math/big</code>
+      </li>
+  
+    <li>
+      <code>struct</code>필드들을 결합하기 위한 인터페이스나 다른 비법들
+      </li>
+  
+    <li>더 나은 escape 분석 (<code>drchase@</code>).</li>
+  
+    <li>손으로 튜닝한 코드와 데이터 레이아웃</li>
+  
+  </ul>
+
+  
+  <p>대부분의 성능fix같은 문제들을 위해
+<code>grind</code>, <code>gofmt</code> <code>-r</code> and <code>eg</code>와 같은 툴을 이용하세요. 
+  </p>
+  
+
+  
+  <p>
+    디버깅 프린트 라이브러리에서 인터페이스 아규먼트를 지우는 것은 전반적으로 15% 를 얻습니다!
+    !
+  </p>
+  
+
+  
+  <p>
+    더 많이 해야할 것이 많이 남았습니다.
+  </p>
+  
+            </div>
+            <div class="originalArticle">
+               <h3>Performance fixes</h3>
+        
+  
+  <p>
+    Profile! (Never done before!)
+  </p>
+  
+
+  <ul>
+  
+    <li>move <code>vars</code> closer to first use</li>
+  
+    <li>split <code>vars</code> into multiple</li>
+  
+    <li>replace code in the compiler with code in the library: e.g. <code>math/big</code></li>
+  
+    <li>use interface or other tricks to combine <code>struct</code> fields</li>
+  
+    <li>better escape analysis (<code>drchase@</code>).</li>
+  
+    <li>hand tuning code and data layout</li>
+  
+  </ul>
+
+  
+  <p>
+    Use tools like <code>grind</code>, <code>gofmt</code> <code>-r</code> and <code>eg</code> for much of this.
+  </p>
+  
+
+  
+  <p>
+    Removing interface argument from a debugging print library got 15% overall!
+  </p>
+  
+
+  
+  <p>
+    More remains to be done.
+  </p>
+  
+            </div>  
+        
+              
+      </article>
+  
+  
+  
+      <article>
+            <div class="translateArticle">
+              <h3>기술적 잇점</h3>
+        
+  
+  <p>
+    변환의 다른 잇점들:
+  </p>
+  
+  <p>
+    GC는 더 이상 늘어진?, 매달린(dangling) 포인터가 생기는 것에 대해 걱정할 필요가 없다는 것을 말합니다. 
+  </p>
+  
+  <p>
+    백엔드부분이 정리될 기회입니다. 
+  </p>
+  
+  <p>
+    툴 체인 도처에 통합된 <code>386</code> and <code>amd64</code>  아키텍쳐들
+   
+  </p>
+  
+
+  
+  <p>
+    새로운 아키텍쳐가 추가되기 쉬워졌습니다.  
+  </p>
+  
+
+  
+  <p>
+    통합된 도구들 : 이제는 하나의 컴파일러, 하나의 어셈블러, 하나의 링커.
+    
+  </p>
+  
+
+            </div>
+            <div class="originalArticle">
+              <h3>Technical benefits</h3>
+        
+  
+  <p>
+    Other benefits of the conversion:
+  </p>
+  
+
+  
+  <p>
+    Garbage collection means no more worry about introducing a dangling pointer.
+  </p>
+  
+
+  
+  <p>
+    Chance to clean up the back ends.
+  </p>
+  
+
+  
+  <p>
+    Unified <code>386</code> and <code>amd64</code> architectures throughout the tool chain.
+  </p>
+  
+
+  
+  <p>
+    New architectures are easier to add.
+  </p>
+  
+
+  
+  <p>
+    Unified the tools: now one compiler, one assembler, one linker.
+  </p>
+  
+
+            </div>  
+        
+              
+      </article>
+  
+  
+  
+      <article>
+      
+            <div class="translateArticle">
+              <h3>컴파일러</h3>
+        
+  
+  <p>
+    <code>GOOS=YYY</code> <code>GOARCH=XXX</code> <code>go</code> <code>tool</code> <code>compile</code>
+  </p>
+  
+
+  
+  <p>
+    하나의 컴파일러; 더이상은 <code>6g</code>, <code>8g</code> 등등 없습니다 .
+  </p>
+  
+
+  
+  <p>
+    5만줄의 포터블한 코드에 관해서.
+<br>
+    
+    registerizer가 지금 포터블하지만, 아키텍쳐들은 잘 특징지어졌습니다. 
+<br>
+    포터블하지 않은 것들 : Peepholing, 사양서에 묶여진 레지스터들.
+<br>
+    일반적으로 포터블한 LOC 의 10% 정도.. 
+  </p>
+  
+            </div>
+            <div class="originalArticle">
+              <h3>Compiler</h3>
+        
+  
+  <p>
+    <code>GOOS=YYY</code> <code>GOARCH=XXX</code> <code>go</code> <code>tool</code> <code>compile</code>
+  </p>
+  
+
+  
+  <p>
+    One compiler; no more <code>6g</code>, <code>8g</code> etc.
+  </p>
+  
+
+  
+  <p>
+    About 50K lines of portable code.
+<br>
+
+    Even the registerizer is portable now; architectures well characterized.
+<br>
+
+    Non-portable: Peepholing, details like registers bound to instructions.
+<br>
+
+    Typically around 10% of the portable LOC.
+  </p>
+  
+            </div>  
+        
+              
+
+      
+      </article>
+  
+  
+  
+      <article>
+            <div class="translateArticle">
+              <h3>어셈블러</h3>
+        
+  
+  <p>
+    <code>GOOS=YYY</code> <code>GOARCH=XXX</code> <code>go</code> <code>tool</code> <code>asm</code>
+  </p>
+  
+
+  
+  <p>
+    새로운 어셈블러, Go에 모두 있고, 처음부터  <code>r@</code>로 쓰여짐 .
+<br>
+    깨끗하고 자연스러운 GO 코드 
+    
+  </p>
+  
+
+  
+  <p>
+    4000라인 이하, 10%의 기계의존
+  </p>
+  
+
+  
+  <p>
+이전의 <code>yacc</code>과 C 어셈블러와 완벽하게 호환가능
+  </p>
+  
+
+  
+  <p>
+    어떻게 이게 가능할까요?
+  </p>
+  
+
+  <ul>
+  
+    <li>
+      Plan 9 어셈블러에서 비롯된 공유된 문법. 
+      </li>
+  
+    <li>
+    통합된 백엔드 로직 (오래된 <code>liblink</code>, 지금은 <code>internal/obj</code>)
+      </li>
+  
+  </ul>
+
+            </div>
+            <div class="originalArticle">
+              <h3>Assembler</h3>
+        
+  
+  <p>
+    <code>GOOS=YYY</code> <code>GOARCH=XXX</code> <code>go</code> <code>tool</code> <code>asm</code>
+  </p>
+  
+
+  
+  <p>
+    New assembler, all in Go, written from scratch by <code>r@</code>.
+<br>
+
+    Clean, idiomatic Go code.
+  </p>
+  
+
+  
+  <p>
+    Less than 4000 lines, &lt;10% machine-dependent.
+  </p>
+  
+
+  
+  <p>
+    Almost completely compatible with previous <code>yacc</code> and C assemblers.
+  </p>
+  
+
+  
+  <p>
+    How is this possible?
+  </p>
+  
+
+  <ul>
+  
+    <li>shared syntax originating in the Plan 9 assemblers</li>
+  
+    <li>unified back-end logic (old <code>liblink</code>, now <code>internal/obj</code>)</li>
+  
+  </ul>
+
+            </div>  
+        
+              
+      </article>
+  
+  
+  
+      <article>
+      
+           <div class="translateArticle">
+              <h3>링커</h3>
+        
+  
+  <p>
+    <code>GOOS=YYY</code> <code>GOARCH=XXX</code> <code>go</code> <code>tool</code> <code>link</code>
+  </p>
+  
+
+  
+  <p>
+    대부분 C코드에서 수작업-변환, 머신- 변환
+    
+  </p>
+  
+
+  
+  <p>
+     오리지널 링커의 일부인 새로운 라이브러리, <code>internal/obj</code>는 기계에 관한 세부사항을 캡쳐하고 오브젝트 파일을 씁니다. 
+  </p>
+  
+
+  
+  <p>
+
+    4개의 아키텍쳐들에서 2만 7천 라인 , 대부분 테이블 (과 약간의 안 좋은 것들 )
+    
+  </p>
+  
+
+  <ul>
+  
+    <li><code>arm</code>: 4000</li>
+  
+    <li><code>arm64</code>: 6000</li>
+  
+    <li><code>ppc64</code>: 5000</li>
+  
+    <li><code>x86</code>: 7500 (<code>386</code> and <code>amd64</code>)</li>
+  
+  </ul>
+
+  
+  <p>
+    Example benefit: one print routine to print any instruction for any architecture.
+  </p>
+  
+           </div>
+           <div class="originalArticle">
+              <h3>Linker</h3>
+        
+  
+  <p>
+    <code>GOOS=YYY</code> <code>GOARCH=XXX</code> <code>go</code> <code>tool</code> <code>link</code>
+  </p>
+  
+
+  
+  <p>
+    Mostly hand- and machine- translated from C code.
+  </p>
+  
+
+  
+  <p>
+    New library, <code>internal/obj</code>, part of original linker, captures details about machines, writes object files.
+  </p>
+  
+
+  
+  <p>
+    27000 lines summed across 4 architectures, mostly tables (plus some ugliness).
+  </p>
+  
+
+  <ul>
+  
+    <li><code>arm</code>: 4000</li>
+  
+    <li><code>arm64</code>: 6000</li>
+  
+    <li><code>ppc64</code>: 5000</li>
+  
+    <li><code>x86</code>: 7500 (<code>386</code> and <code>amd64</code>)</li>
+  
+  </ul>
+
+  
+  <p>
+    Example benefit: one print routine to print any instruction for any architecture.
+  </p>
+  
+           </div>  
+       
+             
+
+      
+      </article>
+  
+  
+  
+      <article>
+      
+            <div class="translateArticle">
+              <h3>부트스트랩</h3>
+        
+  
+  <p>
+     C 컴파일러가 아닌, 부트스트래핑하는데 GO 컴파일러가 필요
+  </p>
+  
+
+  
+  <p>
+    그러므로 소스로부터 1.5를 빌드하기 위해서는 작동하는 GO를 다운로드하거나 빌드하세요. 
+    (build 가 두번이나 들어가서..대충 번역합니다;)
+  </p>
+  
+
+  
+  <p>
+    우리는 Go 1.4 버젼을 Go 1.5+툴체인을 빌드하기 위한 베이스로 여깁니다. (그 이상버젼도 좋습니다. )
+    
+  </p>
+  
+
+  
+  <p>
+    세부사항: <a href="http://golang.org/s/go15bootstrap" target="_blank">golang.org/s/go15bootstrap</a>
+  </p>
+  
+            </div>
+            <div class="originalArticle">
+              <h3>Bootstrap</h3>
+        
+  
+  <p>
+    With no C compiler, bootstrapping requires a Go compiler.
+  </p>
+  
+
+  
+  <p>
+    Therefore need to build or download a working Go installation to build 1.5 from source.
+  </p>
+  
+
+  
+  <p>
+    We use Go 1.4+ as the base to build the 1.5+ tool chain. (Newer is OK too.)
+  </p>
+  
+
+  
+  <p>
+    Details: <a href="http://golang.org/s/go15bootstrap" target="_blank">golang.org/s/go15bootstrap</a>
+  </p>
+  
+            </div>  
+        
+              
+
+      
+      </article>
+  
+  
+  
+      <article>
+            <div class="translateArticle">
+              <h3>미래에는</h3>
+        
+  
+  <p>
+    많은 작업을 여전히 하고 있는 중이구요. 1.5 는 거의 완료되었습니다. 
+    
+  </p>
+  
+
+  
+  <p>
+    미래의 작업:
+  </p>
+  
+
+  
+  <p>
+    더 나은 escape 분석
+    
+<br>
+    SSA를 사용하는 새로운 컴파일러 백엔드 (C보다 훨씬 쉬운 Go쪽으로)
+    
+<br>
+    더 나은 최적화를 가능케 할 것입니다. 
+    
+  </p>
+  
+
+  
+  <p>
+    PDF(나 xml)로 부터 기계 설명을 생성해낼 것입니다. 
+    
+<br>
+    순수히 기계-생성된 명령 정의를 가질 것입니다 : 
+    :
+<br>
+
+    &#34;PDF를 읽고 어셈블러 설정을 써낼 것입니다. &#34;.
+<br>
+
+   이미 역어셈블러들을 위해 deploy되었습니다. 
+  </p>
+  
+            </div>
+            <div class="originalArticle">
+              <h3>Future</h3>
+        
+  
+  <p>
+    Much work still to do, but 1.5 is mostly set.
+  </p>
+  
+
+  
+  <p>
+    Future work:
+  </p>
+  
+
+  
+  <p>
+    Better escape analysis.
+<br>
+
+    New compiler back end using SSA (much easier in Go than C).
+<br>
+
+    Will allow much more optimization.
+  </p>
+  
+
+  
+  <p>
+    Generate machine descriptions from PDFs (or maybe XML).
+<br>
+
+    Will have a purely machine-generated instruction definition:
+<br>
+
+    &#34;Read in PDF, write out an assembler configuration&#34;.
+<br>
+
+    Already deployed for the disassemblers.
+  </p>
+  
+            </div>  
+        
+              
+      </article>
+  
+  
+  
+      <article>
+      
+            <div class="translateArticle">
+              <h3>결론</h3>
+        
+  
+  <p>
+    프로젝트에서 C를 제거하는 것은 큰 진척사항입니다. 
+<br>
+    코드가 좀더 깔끔해지고 테스트가능해지고 프로파일가능해지고 작업하기 쉬워졌습니다.
+    
+  </p>
+  
+
+  
+  <p>
+    새로운 통합된 툴체인이 코드의 양을 줄여주고, 유지보수성을 증가시켜줍니다. 
+    
+  </p>
+  
+
+  
+  <p>
+    유연한 툴체인, 휴대성은 여전히 중요하게 여겨집니다 .
+    
+  </p>
+            </div>
+            <div class="originalArticle">
+              <h3>Conclusions</h3>
+        
+  
+  <p>
+    Getting rid of C was a huge advance for the project.
+<br>
+
+    Code is cleaner, testable, profilable, easier to work on.
+  </p>
+  
+
+  
+  <p>
+    New unified tool chain reduces code size, increases maintainability.
+  </p>
+  
+
+  
+  <p>
+    Flexible tool chain, portability still paramount.
+  </p>
+            </div>  
+        
+              
+  
+
+      
+      </article>
+  
+  
+
+      <article>
+        <h3>Thank you</h3>
+        
+          <div class="presenter">
+            
+  
+  <p>
+    Rob Pike
+  </p>
+  
+
+  
+  <p>
+    Google
+  </p>
+
+
+  
+<p class="link"><a href="mailto:r@golang.org" target="_blank">r@golang.org</a></p><p class="link"><a href="http://golang.org/" target="_blank">http://golang.org/</a></p>
+
+<br>
+<p>번역자 : 아라한사 fb.com/me.adunhansa</p>
+          </div>
+        
+      </article>
+
+    </section>
+
+   <!--  <div id="help">
+      Use the left and right arrow keys or click the left and right
+      edges of the page to navigate between slides.<br>
+      (Press 'H' or navigate to hide this message.)
+    </div>
+ -->
+
+  </body>
+  
+  <script src='js/play.js'></script>
+  
+</html>
